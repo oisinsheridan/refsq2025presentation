@@ -138,6 +138,8 @@ School of Computer Science, University of Nottingham, Nottingham, UK
 %
 \begin{frame}
 
+\vspace{3mm}
+
 \begin{minipage}{0.25\textwidth}
 \begin{flushleft}
 \includegraphics[height=4em]{images/mu-logo.png}
@@ -255,6 +257,152 @@ We highlight situations where it was difficult to formalise these requirements a
 \includegraphics[width=\textwidth]{images/Drone-REQ033.png}
 \end{frame}
 
+\section{Formalising the Requirements}
 
+\begin{frame}{Formalising the Requirements -- Methodology}
+\centering
+\includegraphics[width=0.9\textwidth]{images/processfinal.pdf}
+\end{frame}
+
+
+\begin{frame}{Formalising the Requirements -- Starting from Natural Language}
+\begin{table}
+    \centering
+    \begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+    \hline
+         \textbf{ID} & \textbf{Original English text} \\\hline
+         \hline
+         REQ001 & Allow failure simulations between nucleo/jetson and nucleo/nucleo \\\hline
+         REQ013 & Send references \\\hline %Example of a requirement left out of V1 but that was formalised later (in V3)
+		 REQ016 & Run each simulation loop within 10ms \\\hline        
+         REQ018 & Present the total time spent \\\hline
+         REQ019 & Present the time spent in the control algorithm \\\hline
+         REQ024 & Work on any operational system \\\hline %This is an example of a non-functional requirement for Version 1
+         REQ033 & Monitor linear velocities (ground speed and relative wind speed) \\\hline
+         
+    \end{tabular}
+\end{table}
+
+\begin{block}{}
+\begin{itemize}
+	\item The formalisation began with a set of 66 natural-language requirements for the tilt-rotor drone.
+	
+	\item Each requirement consists of an ID number and a short description
+	
+	\item Each one also had additional metadata: a \textit{Category} of Functional or Non-Functional, a \textit{Feasibility} ranging from Feasible to Unknown to Unfeasible, and a \textit{Group}.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Formalising the Requirements -- FRETish Version 1}
+\begin{block}{}
+\begin{itemize}
+	\item For the first iteration, we mapped the drone's  original natural-language requirements one-to-one into \fretish, matching the vocabulary between both versions where possible.
+	
+	\item Many of these were of a simple form, such as ``\component{System} shall \timing{always/eventually} \response{[variableName]}''
+	
+	\item Twenty of the 66 requirements were not translated in this initial set
+	
+	\item This stage gave us a clearer picture of what information we would need for a more robust formalisation
+\end{itemize}
+\end{block}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+		\hline
+		\textbf{ID} & \textbf{FRETish First Iteration} \\\hline
+		\hline
+		REQ001 & \component{System} shall \timing{always} \response{AllowNucleoJetsonSimulation \& AllowNucleoNucleoSimulation} \\\hline
+		REQ016 & \condition{when SimulationLoopStart} \component{System} shall \timing{within 10 milliseconds} \response{SimulationLoopFinish} \\\hline
+		REQ033 & \component{System} shall \timing{always} \response{MonitorGroundSpeed \& MonitorWindSpeed} \\\hline
+	\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{Formalising the Requirements -- FRETish Version 2}
+
+\begin{block}{}
+\begin{itemize}
+	\item We discussed the ambiguities that we found and consulted with the use case provider for additional detail, leading to a number of updates.
+	
+	\item The largest update was a distinction between running the system in simulation versus in the real world. We created a \scopeX{SimulationMode} scope variable in nine requirements.
+	
+	\item 27 requirements gained a scope of ``\scopeW{MonitoringEnabled}'', so that Data Monitoring would be optional when running the system.
+	
+	\item We added the first child requirements to the set: REQ008\_1 \& \_2, and REQ010\_1 \& \_2.
+\end{itemize}
+\end{block}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+		\hline
+		\textbf{ID} & \textbf{FRETish Second Iteration} \\\hline
+		\hline
+		REQ001 & \scope{SimulationMode} \component{System} shall \timing{eventually} \response{NucleoJetsonFailure|NucleoNucleoFailure} \\\hline
+		REQ033 & \scopeW{MonitoringEnabled} \component{System} shall \timing{always} \response{MonitorGroundSpeed \& MonitorWindSpeed} \\\hline
+	\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Formalising the Requirements -- FRETish Version 2}
+\vspace{-1mm}
+\begin{block}{Child requirements}
+We use child requirements to express how a requirement should apply to different components or in different situations.
+
+REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground station, while REQ008\_2 states that the Jetson should save the data and send it to the active Nucleo for evaluation
+\end{block}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+        \hline
+         \textbf{ID} & \textbf{Final FRETish text} \\\hline
+         \hline
+         \multirow{2}{*}{REQ008} & Save any desired simulation data \\\cline{2-2}
+         & \scopeX{after SimulationMode} \component{System} shall \timing{within 100 ticks} \response{SimulationDataSaved} \\\hline
+         REQ008\_1 & \scopeX{after SimulationMode} \component{Raspberry} shall \timing{within 100 ticks} \response{GroundStationReceivedData} \\\hline
+         REQ008\_2 & \scopeX{after SimulationMode} \component{Jetson} shall \timing{within 100 ticks} \response{SimulationDataRecorded \& NucleoReceivedData} \\\hline
+    \end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Formalising the Requirements -- FRETish Version 3}
+
+\end{frame}
+
+
+\begin{frame}{Formalising the Requirements -- FRETish Version 4}
+
+\end{frame}
+
+
+\begin{frame}{Formalising the Requirements -- Beginning and End}
+\vspace{-1mm}
+\begin{table}
+    \centering
+    \begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+        \hline
+         \textbf{ID} & \textbf{Final FRETish text} \\\hline
+         \hline
+         \multirow{2}{*}{REQ001} & Allow failure simulations between nucleo/jetson and nucleo/nucleo \\\cline{2-2}
+         & \scope{SimulationMode} \condition{whenever SimulateFailureTransitions} \component{System} shall \timing{eventually} \response{JetsonFailureTransitionToNucleo | NucleoFailureSwitchActiveNucleo} \\\hline
+         \multirow{2}{*}{REQ018} & The control loop will complete within 12 milliseconds \\\cline{2-2}
+         & \condition{upon ControlLoopStart} \component{System} shall \timing{within 12 milliseconds} \response{ControlLoopFinish} \\\hline
+         \multirow{2}{*}{REQ019} & The control algorithm will complete within 6 milliseconds \\\cline{2-2}
+         & \condition{upon ControlAlgorithmStart} \component{System} shall \timing{within 6 milliseconds} \response{ControlAlgorithmFinish} \\\hline
+         \multirow{2}{*}{REQ033} & Monitor linear velocities (ground speed and relative wind speed) \\\cline{2-2}
+         & \condition{upon ControlLoopStart} \component{ActiveNucleo} shall \timing{before ControlLoopFinish} \response{(MonitorGroundSpeed \& SendGroundSpeedData) \& (MonitorWindSpeed \& SendWindSpeedData)} \\\hline
+         %REQ060 & \condition{upon ControlLoopStart} \component{ActiveNucleo} shall \timing{before ControlLoopFinish} \response{MonitorVoltageBusConsumption \& SendVoltageBusConsumptionData} \\\hline
+    \end{tabular}
+\end{table}
+\end{frame}
 
 \end{document}
