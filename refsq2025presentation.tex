@@ -375,11 +375,83 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
 
 
 \begin{frame}{Formalising the Requirements -- FRETish Version 3}
+\vspace{-2mm}
+\begin{block}{}
+\begin{itemize}
+	\item We found that the ``\scope{SimulationMode}'' scope didn't fully capture the intention of testing a specific response, so we added \condition{Conditions} for this.
+	
+	\item We introduced 9 new child requirements to specify additional behaviour of some requirements.
+\end{itemize}
+\end{block}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+		\hline
+		\textbf{ID} & \textbf{FRETish Third Iteration} \\\hline
+		\hline
+		REQ001 & \scope{SimulationMode} \condition{whenever SimulateFailureTransitions} \component{System} shall \timing{eventually} \response{JetsonFailureTransitionToNucleo | NucleoFailureSwitchActiveNucleo} \\\hline
+		REQ001\_1 & \condition{when JetsonControl \& JetsonFailureTransitionToNucleoFailure} \component{System} shall \timing{within 100 ticks} \response{!JetsonControl \& NucleoControl} \\\hline
+		REQ001\_2 & \condition{when NucleoOneControl \& NucleoFailureSwitchActiveNucleo} \component{System} shall \timing{within 100 ticks} \response{!NucleoOneControl \& NucleoTwoControl} \\\hline
+		%REQ001\_3 & \condition{when NucleoTwoControl \& NucleoFailureSwitchActiveNucleo} \component{System} shall \timing{within 100 ticks} \response{!NucleoTwoControl \& NucleoOneControl} \\\hline
+	\end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}{Formalising the Requirements -- FRETish Version 3}
+\begin{block}{}
+\begin{itemize}
+	\item The biggest change in this iteration: we decided to update two of the natural-language requirements - REQ018 and REQ019 - to capture new information.
+	
+	\item These were changed to include details about the timing of the control loop and control algorithm in the \fretish requirements, which was revealed in the elicitation discussions to be important information.
+	
+	\item Having this information captured in the \fretish was useful when developing the fourth iteration of the requirements.
+\end{itemize}
+\end{block}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+		\hline
+		\textbf{Iteration} & \textbf{Natural-language and FRETish for REQ018} \\\hline
+		\hline
+		\multirow{2}{*}{Version 1} & Present the total time spent \\\cline{2-2}
+		& \component{System} shall \timing{always} \response{DisplayTotalTimeSpent} \\\hline
+		\multirow{2}{*}{Version 3} & The control loop will complete within 12 milliseconds \\\cline{2-2}
+         & \condition{upon ControlLoopStart} \component{System} shall \timing{within 12 milliseconds} \response{ControlLoopFinish} \\\hline
+		
+	\end{tabular}
+\end{table}
 
 \end{frame}
 
 
 \begin{frame}{Formalising the Requirements -- FRETish Version 4}
+
+\begin{block}{}
+\begin{itemize}
+	\item This (currently) final iteration focused on cleaning up issues that arose during elicitation discussions and re-evaluation of the overall progress made up to that point.
+	
+	\item We returned to the Data Monitoring requirements and found that the idea of the system being run with or without monitoring was incorrect; the system should always monitor these values and transmit the data back to the GCS.
+	
+	\item We used the previous updates to REQ018 to update 23 monitoring requirements from a simple \timing{always} timing to a more detailed structure.
+\end{itemize}
+\end{block}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|p{0.11\textwidth}|p{0.82\textwidth}|}
+		\hline
+		%\textbf{} & \textbf{REQ060} \\\hline
+		%\hline
+		\textbf{REQ060} & Monitor current consumption in each voltage bus \\\hline
+		\fretish v2 & \scopeW{MonitoringEnabled} \component{System} shall \timing{always} \response{MonitorVoltageBusConsumption} \\\hline
+		\fretish v4 & \condition{upon ControlLoopStart} \component{ActiveNucleo} shall \timing{before ControlLoopFinish} \response{MonitorVoltageBusConsumption \& SendVoltageBusConsumptionData} \\\hline
+		
+	\end{tabular}
+\end{table}
 
 \end{frame}
 
@@ -404,5 +476,62 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
     \end{tabular}
 \end{table}
 \end{frame}
+
+
+\section{Analysis \& Discussion}
+
+\begin{frame}{Analysis \& Discussion}
+\begin{table}[t]
+\centering
+        \begin{tabular}{|c|p{0.89\textwidth}|}
+        \hline
+        \emph{scope-option} & null = 47, in/during = 6, while = 5, after = 4 \\\hline
+        \emph{condition-option} & null = 17, trigger(\condition{when/if}) = 39, continual(\condition{whenever}) = 6 \\\hline
+        \emph{timing-option} &  null/eventually = 4, always = 15, next = 1, within = 18, before = 24  \\\hline
+        parent-child &  28 child requirements were assigned a parent requirement   \\\hline
+        \multicolumn{2}{|l|}{66 natural-language requirements, of which 47 are expressed in \fretish.}   \\
+        \multicolumn{2}{|l|}{An additional 15 child requirements were created, for a total of 81 requirements in FRET.} \\\hline
+        \end{tabular}
+\end{table}
+
+\begin{block}{Requirement Metrics}
+\begin{itemize}
+	\item The above table contains metrics on the structure of the final \fretish requirements.
+	
+	\item The \Scope field was not often used, as the natural-language requirements did not specify any system modes. \Scope was mostly used for the \scopeX{SimulationMode}.
+
+	\item Conversely, almost every requirement in the final requirement set has a defined \Timing, with the few that don't being unchanged from earlier versions of the requirements set.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Analysis \& Discussion}
+\begin{block}{Recommendations for formalising requirements}
+\begin{itemize}
+	\item Requirements elicitation and formalisation is best performed as an incremental process, where all parties involved regularly re-examine the requirements in the context of newly-elicited details and newly-uncovered questions.
+	
+	\item We found it very useful to maintain a system where distinct ``versions'' of the requirements set were created and then analysed, rather than a more continuous development process.
+	
+	\item We encourage requirements engineers to maintain detailed records of prior versions of requirements and the updates made to them, to inform discussions on future development as well as for traceability.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Analysis \& Discussion}
+\begin{block}{Improvements to FRET and other tools}
+\begin{itemize}
+	\item At the time, tracking multiple iterations of a \fretish requirements set was difficult, as the tool did not directly support renaming or cloning projects. The development team have since added cloning functionality.
+	
+	\item Parameterised requirements - which would allow the user to apply a single requirement structure to a number of different variables - would have reduced duplication for the 23 Data Monitoring requirements.
+	
+	\item FRET currently supports adding comments and rationale to requirements, but there is no way to add comments to a project as a whole. This would be useful to precisely define the meanings of variables and reduce reliance on external notes.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
 
 \end{document}
