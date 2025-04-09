@@ -171,14 +171,17 @@ School of Computer Science, University of Nottingham, Nottingham, UK
 \begin{block}{Overview}
 
 \begin{itemize}
-    \item We describe the process of formalising the natural-language requirements for a tilt-rotor drone using the Formal Requirements Elicitation Tool (FRET).
+    \item We describe the process of formalising the natural-language requirements for the ProVANT Emergentia tilt-rotor drone using the Formal Requirements Elicitation Tool (FRET) and FRETish.
 
     \item This requirements set evolved over four distinct versions as new information was elicited and incorporated into the FRETish specification.
 
     \item Our two concrete outputs are the formalised requirement set, which we will use in our ongoing development and verification of ProVANT; and metrics about the requirements.
     
-    \item We present guidance for  requirements elicitation and formalisation with FRET.  
-We highlight situations where it was difficult to formalise these requirements and describe potential improvements to FRET to address these difficulties.
+    \item We present guidance for requirements elicitation and formalisation with FRET.  
+    \begin{itemize}
+    \item Highlight where it was hard to formalise the requirements
+    \item Describe potential improvements to FRET to address these difficulties.
+    \end{itemize}
 	
 \end{itemize}
 \end{block}
@@ -194,7 +197,10 @@ We highlight situations where it was difficult to formalise these requirements a
 	\begin{itemize}
 		\item At the latter stage of development under the ProVANT Emergantia project
 		
-		\item The project is a collaboration among two Brazilian universities, Federal University of Minas Gerais (UFMG) and Federal University of Santa Catarina (UFSC), along with the University of Seville, Spain.
+		\item Collaboration between Federal University of Minas Gerais and Federal University of Santa Catarina (Brazil), and University of Seville (Spain).
+		\begin{itemize}
+    		\item One author of this work is a member of the ProVANT project
+    		\end{itemize}
 	\end{itemize}
 \end{block}
 \end{frame}
@@ -234,11 +240,17 @@ We highlight situations where it was difficult to formalise these requirements a
 \begin{minipage}{0.55\textwidth}
 	\begin{block}{FRET}
 		\begin{itemize}
-			\item An open source tool for requirements engineering developed by NASA
+			\item An open-source requirements engineering tool developed by NASA
 			
 			\item Requirements are written in a structured natural-language called FRETish
 			
-			\item FRET provides automated translations from FRETish to CoCoSpec contracts, which can be verified with the Kind2 model checker, and Copilot runtime monitors
+			\item FRET automatically translates \fretish into temporal logic
+			\begin{itemize}
+				\item Unambiguous semantics
+				\item Enables requirement verification
+			\end{itemize}			
+			
+			%\item FRET provides automated translations from FRETish to CoCoSpec contracts, which can be verified with the Kind2 model checker, and Copilot runtime monitors
 
                 \item Formalised requirements are indicated in green, while those in white have not been formalised
 
@@ -285,11 +297,14 @@ We highlight situations where it was difficult to formalise these requirements a
 
 \begin{block}{}
 \begin{itemize}
-	\item The formalisation began with a set of 66 natural-language requirements for the tilt-rotor drone.
+	\item The formalisation began with 66 natural-language requirements for the tilt-rotor drone.
 	
-	\item Each requirement consists of an ID number and a short description
-	
-	\item Each one also had additional metadata: a \textit{Category} of Functional or Non-Functional, a \textit{Feasibility} ranging from Feasible to Unknown to Unfeasible, and a \textit{Group}.
+	\item Each requirement has an ID number, short description, and metadata:
+	\begin{itemize}
+	\item \textit{Category} (Functional/Non-Functional)
+	\item \textit{Feasibility} (Feasible/Unknown/Unfeasible)
+	\item \textit{Group} (e.g. Data Monitoring, Failure Analysis, etc)
+	\end{itemize}
 \end{itemize}
 \end{block}
 
@@ -405,7 +420,7 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
 \begin{itemize}
 	\item The biggest change in this iteration: we decided to update two of the natural-language requirements - REQ018 and REQ019 - to capture new information.
 	
-	\item These were changed to include details about the timing of the control loop and control algorithm in the \fretish requirements, which was revealed in the elicitation discussions to be important information.
+	\item Elicitation discussions highlighted details about timing of control loop  and control algorithm, which we added to the \fretish requirements
 	
 	\item Having this information captured in the \fretish was useful when developing the fourth iteration of the requirements.
 \end{itemize}
@@ -432,7 +447,7 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
 
 \begin{block}{}
 \begin{itemize}
-	\item This (currently) final iteration focused on cleaning up issues that arose during elicitation discussions and re-evaluation of the overall progress made up to that point.
+	\item This final iteration focused on cleaning up issues that arose during elicitation discussions and re-evaluation of the overall progress made up to that point.
 	
 	\item We returned to the Data Monitoring requirements and found that the idea of the system being run with or without monitoring was incorrect; the system should always monitor these values and transmit the data back to the GCS.
 	
@@ -494,9 +509,9 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
         \end{tabular}
 \end{table}
 
-\begin{block}{Requirement Metrics}
+\begin{block}{Requirement Metrics for Final Version}
 \begin{itemize}
-	\item The above table contains metrics on the structure of the final \fretish requirements.
+	\item We counted which keywords used for \fretish{ }\Scope, \Condition{,} and \Timing fields
 	
 	\item The \Scope field was not often used, as the natural-language requirements did not specify any system modes. \Scope was mostly used for the \scopeX{SimulationMode}.
 
@@ -508,7 +523,7 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
 
 
 \begin{frame}{Analysis \& Discussion}
-\begin{block}{Recommendations for formalising requirements}
+\begin{block}{Recommendations for Formalising Requirements}
 \begin{itemize}
 	\item Requirements elicitation and formalisation is best performed as an incremental process, where all parties involved regularly re-examine the requirements in the context of newly-elicited details and newly-uncovered questions.
 	
@@ -521,7 +536,7 @@ REQ008\_1 specifies that the Raspberry Pi should transmit the data to the ground
 
 
 \begin{frame}{Analysis \& Discussion}
-\begin{block}{Improvements to FRET and other tools}
+\begin{block}{Improvements to FRET and Other Tools}
 \begin{itemize}
 	\item At the time, tracking multiple iterations of a \fretish requirements set was difficult, as the tool did not directly support renaming or cloning projects. The development team have since added cloning functionality.
 	
